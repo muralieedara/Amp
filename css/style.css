@@ -1,0 +1,139 @@
+a{
+  text-decoration:none;
+  color: #000;
+}
+a:hover{
+  text-decoration: none;
+  color: #000;
+}
+.list-group
+{
+	padding: 3px 5px 0px 15px;
+}
+.list-group-item
+{
+  border:none;
+  padding: 3px 5px 0px 15px;
+}
+ul li:hover
+{
+	background-color: #DCDCDC;
+}
+.pointer
+{
+	cursor: pointer;
+}
+.custom-icon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    float: left;
+    display: block; /* This is required */
+}
+.custom-icon.icon-folder {
+    background: url(../images/folder.png);
+    background-size: cover;
+}
+.custom-icon.icon-plus {
+    background: url(../images/Big.png);
+    background-size: cover;
+}
+.custom-icon.icon-up {
+    background: url(../images/Publication.png);
+    background-size: cover;
+}
+.custom-icon.icon-F {
+    background: url(../images/F.png);
+    background-size: cover;
+}
+.custom-icon.normal {
+    width: 32px;
+    height: 32px;
+}
+
+.custom-icon.small {
+    width: 16px;
+    height: 16px;
+}
+
+.custom-icon.medium {
+    width: 64px;
+    height: 64px;
+}
+
+.custom-icon.large {
+    width: 128px;
+    height: 128px;
+}
+#content span
+{
+	color: #1E90FF;
+}
+.accordion__container {
+    background: #FFF;
+    padding: 5px;
+    width: 100%
+    }
+.accordion__tab {
+    background: #FFF;
+    margin-bottom: 5px;
+}
+.accordion__tab--title {
+    background: #DCDCDC;
+    padding: 10px;
+    cursor: pointer;
+    border: 2px solid ;
+}
+.accordion__tab--content {
+    background: #999;
+    padding: 20px;
+}
+.font
+{   
+	font-size: 15px;
+	color:#778899;
+}
+.m-b
+ {
+  margin-bottom: 10px;
+ }
+.p-r{
+  position:relative;
+}
+.p-a{
+  position:absolute;
+}
+.db-toggle
+{
+   right: 20px;
+   bottom:3px;
+}
+.db-menu{
+  z-index: 10;
+  top: 22px;
+  left:0;
+}
+.db-menu div.menu-h{
+
+  background-color: #fff;
+  border:1px solid #000;
+}
+.snippet
+{
+    border-width:5px; 
+    border-style:dashed;
+    margin-left: 15px;
+}
+.print
+{
+  color: #A52A2A;
+}
+.header
+{
+   font-family: Arial, Helvetica, sans-serif;
+   font-weight: bold;
+   font-size: 20px;
+}

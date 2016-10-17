@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="UTF-8">
+      <title>Amp-web</title>
+      <link rel="stylesheet prefetch" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <link rel="stylesheet" href="css/style.css">
+      <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+   </head>
+   <body ng-app="fileStructure" class="col-md-12">
+      <div class="panel panel-default">
+         <div class="panel-heading">
+            <h3 class="panel-title">Panel title</h3>
+         </div>
+         <div ng-controller="fileController as fc" class="row">
+            <div class="col-md-3">
+               <ul class="list-group">
+                  <div  ng-click="toggleStructure(fileStructure[file])" ng-repeat="file in keys" >
+                     <li hightlight-row class="list-group-item pointer" ng-if="file !== 'show'">
+                        <a>
+                           <span class="custom-icon icon-folder small">
+                           </span>
+                           &nbsp;
+                           {{file}}
+                        </a>
+                        <ul class="list-group" ng-show="fileStructure[file].show">
+                           <div  ng-click="toggleStructure(fileStructure[file][entityId]);$event.stopPropagation()" ng-repeat="entityId in getKeys(fileStructure[file])">
+                              <li hightlight-row class="list-group-item pointer" ng-if="entityId !== 'show'">
+                                 <a>
+                                    <span ng-class="iconGenerator(fileStructure[file][entityId])">
+                                    </span>
+                                    &nbsp;
+                                    {{entityId}}
+                                 </a>
+                                 <ul class="list-group default" ng-show="fileStructure[file][entityId].show">
+                                    <div  ng-click="toggleStructure(fileStructure[file][entityId][uniqueId]);$event.stopPropagation()" ng-repeat="uniqueId in getKeys(fileStructure[file][entityId])">
+                                       <li hightlight-row  class="list-group-item pointer" ng-if="uniqueId !== 'show' && uniqueId !== 'publication_type'">
+                                          <a>
+                                             <span ng-class="iconGenerator(fileStructure[file][entityId][uniqueId])">
+                                             </span>
+                                              &nbsp;
+                                             {{uniqueId}}
+                                          </a>
+                                       </li>
+                                    </div>
+                                 </ul>
+                              </li>
+                           </div>
+                        </ul>      
+                     </li>
+                  </div>
+               </ul>        
+            </div>
+            <div class="col-md-9" ng-if="rightPanel">
+                  <div id="content">
+                     <h3>Execute Publication
+                        <span>
+                        Publication Manager</span>
+                     </h3>
+                     <div class="row">
+                        <div class="col-md-2">
+                           <label for="fname">Publication Name:
+                           </label>
+                        </div>
+                        <div class="col-md-7">
+                           <input type="text" class="form-control" ng-model="uniqueId" readonly="readonly">
+                        </div>
+                     </div>
+                     <br>
+                     <div class="row">
+                        <div class="col-md-2">
+                           <label for="fname">Description:
+                           </label>
+                        </div>
+                        <div class="col-md-7">
+                           <textarea class="form-control" ng-model="description" readonly="readonly"></textarea>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="accordion__container">
+                     <div class="accordion__tab">
+                        <div class="accordion__tab-title pointer" ng-click="openTab('parameter')">
+                           <h4 ng-class="getCaretStatus('parameter')"><span class="header">Parameters</span></h4>
+                        </div>
+                        <div class="accordion__tab-content" ng-show="isOpenTab('parameter')">
+                           <table class="table table-striped table-bordered">
+                              <thead>
+                                 <tr>
+                                    <th class="col-md-2 center">Parameter</th>
+                                    <th class="col-md-2 center">Description</th>
+                                    <th class="col-md-2 center">Type</th>
+                                    <th class="col-md-2 center">Cardinality</th>
+                                    <th class="col-md-2 center">Scope</th>
+                                    <th class="col-md-2 center">Value</th>
+                                 </tr>
+                              </thead>
+                              <tbody>
+                                 <tr ng-repeat="parameter in parameters  | filter: {'scope': parameter_filter}">
+                                    <td class="col-md-2">{{parameter.unique_id}}</td>
+                                    <td class="col-md-2">{{parameter.description}}</td>
+                                    <td class="col-md-2">{{parameter.type}}</td>
+                                    <td class="col-md-2">{{parameter.cardinality}}</td>
+                                    <td class="col-md-2">{{parameter.scope}}</td>
+                                    <td class="col-md-2">
+                                       <input type="text" ng-model="param[parameter.unique_id]" ng-readonly="parameter.scope=='STATIC'" ng-value="parameter.value">
+                                    </td>
+                                 </tr>
+                              </tbody>
+                           </table>
+                           <button class="btn btn-outline-primary" ng-show="parameter_filter==='DYNAMIC'" ng-click="parameter_filter='STATIC'">Show Static</button>
+                           <button class="btn btn-outline-primary" ng-show="parameter_filter==='STATIC'" ng-click="parameter_filter = 'DYNAMIC'">Hide Static</button>
+                        </div>
+                     </div>   
+                        <!--.accordion_tab -->
+                     <div class="accordion__tab">
+                        <div class="accordion__tab-title pointer" ng-click="openTab('targetTable')">
+                           <h4 ng-class="getCaretStatus('targetTable')"><span class="header">Target Tables</span></h4>
+                        </div>
+                        <div class="accordion__tab-content" ng-show="isOpenTab('targetTable')">
+                           <div ng-init="accordianStatus=true">
+                              <table class="table table-striped table-bordered">
+                                 <thead>
+                                    <tr>
+                                       <th class="center">Icon</th>
+                                       <th class="center">Target</th>
+                                       <th class="center">Incremental</th>
+                                       <th class="center">Table Name</th>
+                                    </tr>
+                                 </thead>   
+                                 <tbody ng-repeat="target in targets">
+                                    <tr>
+                                       <td>
+                                          <span ng-class="getCaretStatus(target.unique_id)"  ng-click="openTab(target.unique_id)"></span>
+                                       </td>
+                                       <td>{{target.unique_id}}</td>
+                                       <td class="center">
+                                          <input type="checkbox" ng-checked="target.incremental" readonly="readonly" disabled="disabled">
+                                       </td>
+                                       <td class="center">{{target.table_name}}</td>
+                                    </tr>
+                                    <tr ng-show="isOpenTab(target.unique_id)">
+                                       <td>&#x21B3;</td>
+                                       <td class="col-md-11" colspan="3" >
+                                          <table class="table table-striped table-bordered">
+                                             <thead>
+                                                <tr>
+                                                   <th class="center">column_name</th>
+                                                   <th class="center">Data Type</th>
+                                                </tr>
+                                             </thead>
+                                             <tbody>   
+                                                <tr ng-repeat="target_data in target.table_columns">
+                                                   <td>{{target_data.column_name}}</td>
+                                                   <td>{{target_data.data_type}}</td>
+                                                </tr>
+                                             </tbody>   
+                                          </table>
+                                       </td>
+                                    </tr>
+                                 </tbody>
+                              </table>
+                           </div>
+                        </div>
+                     </div>
+                        <!--accordion_tab-->
+                        <div class="accordion__tab">
+                           <div class="accordion__tab-title pointer" ng-click="openTab('execution')">
+                              <h4 ng-class="getCaretStatus('execution')"><span class="header">Execution Options</span></h4>
+                           </div>
+                           <div class="accordion__tab-content" ng-show="isOpenTab('execution')">
+                              <div class="col-md-3">
+                                 <input type="checkbox" ng-model="full"> 
+                                 Force Full Replacement
+                              </div> 
+                              <div class="cole-md-9 font">Set incremental target tables to be fully replaced for this execution.
+                              </div>
+                              <div class="row">
+                                 <div class="col-md-3">Mart Database:
+                                 </div>
+                                 <div class="col-md-9 p-r">
+                                    <input type="text"  ng-model="database.db_alias" class="col-md-12">
+                                    <span class="p-a db-toggle" ng-click="database.menu = !database.menu"><i class="fa fa-sort-desc" aria-hidden="true"></i>
+                                    </span>
+                                    <div class="col-md-12 p-a db-menu" ng-show="database.menu">
+                                       <div class="menu-h">
+                                          <div ng-repeat="db in databases"  ng-click="change_database(db.db_alias)">
+                                          {{db.db_alias}}
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="font">
+                              The Current user must have to create tables in the mart database to execute the publication
+                              </div>
+                              <div class="row m-b">
+                                 <div class="col-md-3">
+                                    <button class="btn-block" ng-click="execute()">Execute Publication 
+                                    </button>
+                                 </div>
+                                 <div class="col-md-9 font">Execute the publication and preview the resulting tables.
+                                 </div>
+                              </div>
+                              <div class="row m-b ">
+                                 <div class="col-md-3">
+                                    <button class="btn-block"  ng-click="showCode()">Show Code
+                                    </button>
+                                 </div>
+                                 <div class="col-md-9 font">Generate code for the publication and display it in Aginity Workbench.
+                                 </div>
+                              </div>
+                              <div class="row m-b">
+                                 <div class="col-md-3" >
+                                    <button class="btn-block" >Copy Snippet Clipboard
+                                    </button>
+                                 </div>
+                                 <div class="col-md-9 font">Copy the snippet to the clipboard to be pasted into an external tool.
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!--accortion_tab-->     
+                     <div class="accordion__tab">
+                        <div class="accordion__tab-title pointer" ng-click="openTab('snippet')">
+                        <h4 ng-class="getCaretStatus('snippet')"><span class="header">Snippets</span></h4>
+                        </div>
+                        <div class="accordion__tab-content" ng-show="isOpenTab('snippet')">
+                           <button class=" btn btn-primary col-md-2">
+                           Shell
+                           </button>
+                           <div class="snippet col-md-8">
+                           amp-codegen.sh</br>
+                           -mapping "{{uniqueId}}"\</br>   
+                              -p "
+                           <span  ng-repeat="(key,val) in param" class="print">
+                              {{key}}={{val}}, 
+                           </span>\<br>
+                           --db MY_CATALOG_SERVER.local 1522 gprimosch
+                           $catalog_password AMP_DEMO_METADATA_TRUNK_240 \</br>   
+                           --mart_db MY_HADOOP_HOST.local 1422 gprimosch $mart_password {{database.db_alias}} \</br>
+                           <span ng-show="full"> --full-replacement-</span>
+                           </div>
+                        </div>
+                      </div>
+                      <!-- .accordion__tab -->
+                  </div>
+                  <!--accordion_container-->
+            </div>
+            <!--panel-->
+         </div>
+         <!--controller-->
+      </div>
+   </body>
+   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+   <script type="text/javascript" src="js/app.js"></script>
+   <script type="text/javascript" src="js/directives.js"></script>
+</html>      
